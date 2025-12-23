@@ -12,10 +12,13 @@
 - [Bài 10: Con trỏ trong C++ (Pointer)]()
 - [Bài 11: Cấp phát động trong C++ (new / delete)]()
 - [Bài 12: Lập trình hướng đối tượng trong C++ (Class & Object)]()
-- []()
-- []()
-- []()
-- []()
+- [Bài 13: Kế thừa trong C++ (Inheritance)]()
+- [Bài 14: Đa hình trong C++ (Polymorphism & Virtual Function)]()
+- [ Bài 15: STL trong C++ (Standard Template Library)]()
+- [Bài 16: Đệ quy trong C++ (Recursion)]()
+- [Bài 17: File I/O trong C++ (Đọc / Ghi File)]()
+- [Bài 18: Cấu trúc dữ liệu & Thuật toán trong C++ (DSA)]()
+- [Bài 19: Quy hoạch động trong C++ (Dynamic Programming)]()
 
 
 # Bài 01: Giới thiệu C++
@@ -2930,5 +2933,1447 @@ So sánh `private` và `protected` trong kế thừa.
 - Tạo class con
 - Override phương thức
 - Áp dụng kế thừa thực tế
+
+# Bài 14: Đa hình trong C++ (Polymorphism & Virtual Function)
+[:arrow_up: Mục lục](#mục-lục)
+
+---
+
+## 🎯 Mục tiêu bài học
+Sau khi học xong bài này, bạn sẽ:
+- Hiểu **đa hình (Polymorphism)** là gì
+- Biết vì sao cần **virtual function**
+- Phân biệt **compile-time polymorphism** và **runtime polymorphism**
+- Sử dụng **override**, **base pointer → derived object**
+- Tránh các lỗi thường gặp khi dùng đa hình
+
+---
+
+## 1️⃣ Đa hình là gì?
+
+👉 **Đa hình (Polymorphism)** nghĩa là:
+> *Cùng một tên hàm, nhưng hành vi khác nhau tùy đối tượng*
+
+📌 Ví dụ thực tế:
+- `NhanVien` → `tinhLuong()`
+- `NhanVienFullTime` → tính theo lương tháng
+- `NhanVienPartTime` → tính theo giờ
+
+---
+
+## 2️⃣ Các loại đa hình trong C++
+
+### 🔹 2.1 Đa hình tại thời điểm biên dịch (Compile-time)
+- Nạp chồng hàm (Function Overloading)
+- Nạp chồng toán tử (Operator Overloading)
+
+### 🔹 2.2 Đa hình tại thời điểm chạy (Runtime)
+- Kế thừa + **virtual function**
+- Gọi hàm thông qua **con trỏ class cha**
+
+📌 Chương này tập trung vào **runtime polymorphism**.
+
+---
+
+## 3️⃣ Vấn đề khi KHÔNG dùng virtual ❌
+
+```cpp
+#include <iostream>
+using namespace std;
+
+class Cha {
+public:
+    void hello() {
+        cout << "Hello Cha";
+    }
+};
+
+class Con : public Cha {
+public:
+    void hello() {
+        cout << "Hello Con";
+    }
+};
+
+int main() {
+    Cha *p;
+    Con c;
+    p = &c;
+    p->hello(); // Hello Cha ❌
+}
+```
+
+👉 Dù `p` trỏ tới `Con`, nhưng vẫn gọi hàm của `Cha`.
+
+---
+
+## 4️⃣ Giải pháp: Virtual Function ✅
+
+```cpp
+class Cha {
+public:
+    virtual void hello() {
+        cout << "Hello Cha";
+    }
+};
+```
+
+📌 Thêm từ khóa `virtual` → bật **đa hình động**.
+
+---
+
+## 5️⃣ Ví dụ đa hình hoàn chỉnh
+
+```cpp
+#include <iostream>
+using namespace std;
+
+class Cha {
+public:
+    virtual void hello() {
+        cout << "Hello Cha";
+    }
+};
+
+class Con : public Cha {
+public:
+    void hello() {
+        cout << "Hello Con";
+    }
+};
+
+int main() {
+    Cha *p;
+    Con c;
+    p = &c;
+    p->hello(); // Hello Con ✅
+}
+```
+
+📌 Hàm được quyết định **tại thời điểm chạy**.
+
+---
+
+## 6️⃣ Từ khóa `override` (khuyến nghị dùng)
+
+```cpp
+class Con : public Cha {
+public:
+    void hello() override {
+        cout << "Hello Con";
+    }
+};
+```
+
+📌 `override` giúp:
+- Tránh lỗi ghi đè sai hàm
+- Code rõ ràng hơn
+
+---
+
+## 7️⃣ Virtual Destructor (RẤT QUAN TRỌNG)
+
+👉 Khi dùng đa hình + cấp phát động, **destructor phải là virtual**.
+
+```cpp
+class Cha {
+public:
+    virtual ~Cha() {
+        cout << "Huy Cha";
+    }
+};
+```
+
+📌 Nếu không:
+- Destructor class con có thể **không được gọi**
+- Dễ gây **rò rỉ bộ nhớ**
+
+---
+
+## 8️⃣ Ví dụ thực tế: Tính lương nhân viên
+
+```cpp
+class NhanVien {
+public:
+    virtual int tinhLuong() {
+        return 0;
+    }
+};
+
+class FullTime : public NhanVien {
+public:
+    int tinhLuong() override {
+        return 1000;
+    }
+};
+
+class PartTime : public NhanVien {
+public:
+    int tinhLuong() override {
+        return 500;
+    }
+};
+
+int main() {
+    NhanVien *nv1 = new FullTime();
+    NhanVien *nv2 = new PartTime();
+
+    cout << nv1->tinhLuong() << endl;
+    cout << nv2->tinhLuong() << endl;
+
+    delete nv1;
+    delete nv2;
+}
+```
+
+---
+
+## 9️⃣ Con trỏ class cha & object class con
+
+📌 Đây là **trái tim của đa hình**:
+
+```cpp
+Cha *p = new Con();
+p->hello();
+```
+
+---
+
+## 🔟 Bảng so sánh
+
+| Tiêu chí | Không virtual | Virtual |
+|--------|---------------|---------|
+| Thời điểm gọi | Biên dịch | Chạy |
+| Đa hình | ❌ | ✅ |
+| Linh hoạt | Thấp | Cao |
+| OOP chuẩn | ❌ | ✅ |
+
+---
+
+## 1️⃣1️⃣ Bài tập thực hành ✍️
+
+### 📝 Bài 1
+Tạo class:
+- `Shape`
+- `Rectangle`, `Circle`
+Dùng `virtual area()`
+
+---
+
+### 📝 Bài 2
+Viết chương trình quản lý:
+- Nhân viên FullTime / PartTime
+- Tính tổng lương bằng đa hình
+
+---
+
+### 📝 Bài 3 (tư duy)
+Vì sao destructor cần `virtual`?
+
+---
+
+## ❌ Lỗi thường gặp
+- Quên `virtual`
+- Gọi hàm bằng object thay vì pointer
+- Không dùng `override`
+- Quên virtual destructor
+
+---
+
+## 🧠 Ghi nhớ nhanh
+- Đa hình = kế thừa + virtual
+- Base pointer → derived object
+- Destructor nên là virtual
+- Luôn dùng `override`
+
+---
+
+## ✅ Tổng kết
+✔️ Bạn đã:
+- Hiểu rõ đa hình
+- Biết dùng virtual function
+- Viết OOP đúng chuẩn
+
+# Bài 15: STL trong C++ (Standard Template Library)
+[:arrow_up: Mục lục](#mục-lục)
+
+---
+
+## 🎯 Mục tiêu bài học
+Sau khi học xong bài này, bạn sẽ:
+- Hiểu **STL là gì** và vì sao nên dùng
+- Nắm được các **container phổ biến**
+- Biết dùng **iterator** và **algorithm**
+- Áp dụng STL để viết code **ngắn – nhanh – an toàn**
+
+---
+
+## 1️⃣ STL là gì?
+
+👉 **STL (Standard Template Library)** là thư viện chuẩn của C++, cung cấp:
+- **Container**: nơi lưu trữ dữ liệu
+- **Iterator**: duyệt dữ liệu
+- **Algorithm**: thuật toán có sẵn
+
+📌 STL giúp:
+- Giảm code thủ công
+- Tránh lỗi bộ nhớ
+- Code gọn, hiệu năng cao
+
+---
+
+## 2️⃣ Các thành phần chính của STL
+
+| Thành phần | Vai trò |
+|---------|--------|
+| Container | Lưu trữ dữ liệu |
+| Iterator | Duyệt container |
+| Algorithm | Xử lý dữ liệu |
+| Function Object | Hàm đặc biệt |
+| Allocator | Quản lý bộ nhớ |
+
+---
+
+## 3️⃣ Container – `vector` (quan trọng nhất)
+
+👉 `vector` là **mảng động** trong STL.
+
+### 3.1 Khai báo `vector`
+```cpp
+#include <vector>
+vector<int> v;
+```
+
+---
+
+### 3.2 Thêm phần tử
+```cpp
+v.push_back(10);
+v.push_back(20);
+```
+
+---
+
+### 3.3 Truy cập phần tử
+```cpp
+cout << v[0];
+cout << v.at(1);
+```
+
+---
+
+### 3.4 Duyệt `vector`
+```cpp
+for (int i = 0; i < v.size(); i++)
+    cout << v[i] << " ";
+```
+
+Hoặc:
+```cpp
+for (int x : v)
+    cout << x << " ";
+```
+
+---
+
+## 4️⃣ Một số hàm `vector` thường dùng
+
+| Hàm | Ý nghĩa |
+|----|--------|
+| push_back | Thêm |
+| pop_back | Xóa cuối |
+| size | Số phần tử |
+| empty | Kiểm tra rỗng |
+| clear | Xóa hết |
+
+---
+
+## 5️⃣ Container – `map`
+
+👉 `map` lưu **key – value**, key **không trùng**.
+
+### 📌 Ví dụ
+```cpp
+#include <map>
+map<string, int> m;
+
+m["An"] = 20;
+m["Binh"] = 22;
+```
+
+Duyệt:
+```cpp
+for (auto x : m) {
+    cout << x.first << " " << x.second << endl;
+}
+```
+
+---
+
+## 6️⃣ Container – `set`
+
+👉 `set`:
+- Không trùng phần tử
+- Tự động sắp xếp
+
+```cpp
+#include <set>
+set<int> s;
+
+s.insert(5);
+s.insert(3);
+s.insert(5); // không thêm
+```
+
+---
+
+## 7️⃣ Stack & Queue
+
+### Stack (LIFO)
+```cpp
+#include <stack>
+stack<int> st;
+st.push(1);
+st.pop();
+```
+
+### Queue (FIFO)
+```cpp
+#include <queue>
+queue<int> q;
+q.push(1);
+q.pop();
+```
+
+---
+
+## 8️⃣ Iterator
+
+👉 Iterator giống như **con trỏ** để duyệt STL.
+
+```cpp
+vector<int>::iterator it;
+for (it = v.begin(); it != v.end(); it++) {
+    cout << *it << " ";
+}
+```
+
+📌 Hiện đại hơn:
+```cpp
+for (auto it = v.begin(); it != v.end(); it++)
+    cout << *it << " ";
+```
+
+---
+
+## 9️⃣ Algorithm – `sort`, `find`, `count`
+
+```cpp
+#include <algorithm>
+sort(v.begin(), v.end());
+```
+
+Tìm:
+```cpp
+auto it = find(v.begin(), v.end(), 10);
+```
+
+Đếm:
+```cpp
+count(v.begin(), v.end(), 10);
+```
+
+---
+
+## 🔟 Ví dụ tổng hợp STL
+
+```cpp
+#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+int main() {
+    vector<int> v = {5, 1, 3, 2};
+
+    sort(v.begin(), v.end());
+
+    for (int x : v)
+        cout << x << " ";
+
+    return 0;
+}
+```
+
+---
+
+## 1️⃣1️⃣ Khi nào nên dùng STL?
+
+✔️ Nên dùng:
+- Xử lý mảng, danh sách
+- Đếm tần suất
+- Sắp xếp, tìm kiếm
+
+❌ Không dùng khi:
+- Cần kiểm soát bộ nhớ tuyệt đối
+- Lập trình nhúng mức thấp
+
+---
+
+## 1️⃣2️⃣ Bài tập thực hành ✍️
+
+### 📝 Bài 1
+Dùng `vector`:
+- Nhập n số
+- Sắp xếp tăng dần
+
+---
+
+### 📝 Bài 2
+Dùng `map`:
+- Đếm tần suất xuất hiện ký tự
+
+---
+
+### 📝 Bài 3
+Dùng `set`:
+- Loại bỏ phần tử trùng
+
+---
+
+## ❌ Lỗi thường gặp
+- Quên include thư viện
+- Truy cập iterator sai
+- Nhầm `map` và `unordered_map`
+
+---
+
+## 🧠 Ghi nhớ nhanh
+- `vector` ≈ mảng động
+- `map` = key – value
+- `set` = không trùng
+- STL giúp code ngắn hơn
+
+---
+
+## ✅ Tổng kết
+✔️ Bạn đã:
+- Hiểu STL
+- Dùng container phổ biến
+- Kết hợp algorithm hiệu quả
+
+# Bài 16: Đệ quy trong C++ (Recursion)
+[:arrow_up: Mục lục](#mục-lục)
+
+---
+
+## 🎯 Mục tiêu bài học
+Sau khi học xong bài này, bạn sẽ:
+- Hiểu **đệ quy là gì**
+- Biết cấu trúc **hàm đệ quy**
+- Phân biệt **điều kiện dừng** và **bước đệ quy**
+- Áp dụng đệ quy vào các bài toán kinh điển
+- Tránh các lỗi thường gặp khi dùng đệ quy
+
+---
+
+## 1️⃣ Đệ quy là gì?
+
+👉 **Đệ quy (Recursion)** là kỹ thuật mà **một hàm tự gọi lại chính nó** để giải quyết bài toán.
+
+📌 Ý tưởng:
+> Bài toán lớn → chia thành các bài toán nhỏ giống nhau
+
+---
+
+## 2️⃣ Cấu trúc của một hàm đệ quy
+
+Một hàm đệ quy **bắt buộc phải có**:
+
+1. **Điều kiện dừng (Base Case)** – nếu không có → vòng lặp vô hạn
+2. **Bước đệ quy (Recursive Case)** – gọi lại chính hàm
+
+### 📌 Cấu trúc chuẩn
+```cpp
+void func(int n) {
+    if (n == 0) return;   // điều kiện dừng
+    func(n - 1);          // bước đệ quy
+}
+```
+
+---
+
+## 3️⃣ Ví dụ đơn giản
+
+### 📌 In số từ 1 đến n
+
+```cpp
+void print(int n) {
+    if (n == 0) return;
+    print(n - 1);
+    cout << n << " ";
+}
+```
+
+📌 Trình tự chạy:
+```
+print(3)
+ → print(2)
+   → print(1)
+     → print(0) (dừng)
+     ← in 1
+   ← in 2
+ ← in 3
+```
+
+---
+
+## 4️⃣ Ví dụ: Tính giai thừa
+
+### Công thức
+```
+n! = n * (n - 1)!
+0! = 1
+```
+
+### Code
+```cpp
+int factorial(int n) {
+    if (n == 0) return 1;
+    return n * factorial(n - 1);
+}
+```
+
+---
+
+## 5️⃣ Ví dụ: Dãy Fibonacci
+
+### Công thức
+```
+F(n) = F(n-1) + F(n-2)
+F(0) = 0, F(1) = 1
+```
+
+### Code đệ quy (chậm ❌)
+```cpp
+int fib(int n) {
+    if (n <= 1) return n;
+    return fib(n - 1) + fib(n - 2);
+}
+```
+
+📌 Lưu ý:
+- Đệ quy Fibonacci **rất chậm**
+- Sẽ học tối ưu ở **Quy hoạch động**
+
+---
+
+## 6️⃣ Đệ quy và Stack
+
+👉 Mỗi lần gọi hàm:
+- Được lưu vào **Call Stack**
+- Lưu biến cục bộ & địa chỉ quay lại
+
+📌 Quá nhiều lần gọi → **Stack Overflow**.
+
+---
+
+## 7️⃣ So sánh đệ quy và vòng lặp
+
+| Tiêu chí | Đệ quy | Vòng lặp |
+|--------|--------|----------|
+| Dễ hiểu | Với bài toán chia nhỏ | Với bài đơn giản |
+| Bộ nhớ | Tốn stack | Ít hơn |
+| Hiệu năng | Thường chậm | Nhanh hơn |
+
+📌 Không phải bài nào cũng nên dùng đệ quy.
+
+---
+
+## 8️⃣ Bài toán kinh điển dùng đệ quy
+
+### ✔️ Tính tổng 1 → n
+```cpp
+int sum(int n) {
+    if (n == 0) return 0;
+    return n + sum(n - 1);
+}
+```
+
+---
+
+### ✔️ Đếm số chữ số
+```cpp
+int countDigit(int n) {
+    if (n < 10) return 1;
+    return 1 + countDigit(n / 10);
+}
+```
+
+---
+
+### ✔️ Tháp Hà Nội (ý tưởng)
+- Di chuyển n-1 đĩa
+- Di chuyển đĩa lớn nhất
+- Di chuyển n-1 đĩa còn lại
+
+---
+
+## 9️⃣ Khi nào nên dùng đệ quy?
+
+✔️ Nên dùng khi:
+- Cấu trúc cây
+- Chia để trị
+- DFS, Backtracking
+
+❌ Không nên dùng khi:
+- Bài toán lặp đơn giản
+- Dữ liệu lớn (dễ stack overflow)
+
+---
+
+## 🔟 Lỗi thường gặp ❌
+- Quên điều kiện dừng
+- Điều kiện dừng sai
+- Gọi đệ quy vô hạn
+- Stack overflow
+
+---
+
+## 1️⃣1️⃣ Bài tập thực hành ✍️
+
+### 📝 Bài 1
+Viết hàm đệ quy:
+- Tính tổng chữ số của số nguyên
+
+---
+
+### 📝 Bài 2
+Viết hàm:
+- Đảo ngược số nguyên bằng đệ quy
+
+---
+
+### 📝 Bài 3
+Viết chương trình:
+- Tính Fibonacci
+- So sánh đệ quy và vòng lặp
+
+---
+
+## 🧠 Ghi nhớ nhanh
+- Đệ quy phải có **điều kiện dừng**
+- Hiểu rõ luồng chạy
+- Không lạm dụng đệ quy
+
+---
+
+## ✅ Tổng kết
+✔️ Bạn đã:
+- Hiểu đệ quy
+- Viết hàm đệ quy
+- Áp dụng cho bài toán kinh điển
+
+# Bài 17: File I/O trong C++ (Đọc / Ghi File)
+[:arrow_up: Mục lục](#mục-lục)
+
+---
+
+## 🎯 Mục tiêu bài học
+Sau khi học xong bài này, bạn sẽ:
+- Hiểu **File I/O là gì**
+- Biết đọc / ghi file văn bản trong C++
+- Sử dụng các lớp **ifstream, ofstream, fstream**
+- Xử lý lỗi khi làm việc với file
+- Áp dụng file vào bài toán thực tế
+
+---
+
+## 1️⃣ File I/O là gì?
+
+👉 **File I/O (Input / Output)** là thao tác:
+- **Đọc dữ liệu từ file**
+- **Ghi dữ liệu ra file**
+
+📌 Dùng khi:
+- Lưu dữ liệu lâu dài
+- Đọc dữ liệu lớn
+- Lưu log, báo cáo
+
+---
+
+## 2️⃣ Thư viện cần dùng
+
+```cpp
+#include <fstream>
+```
+
+C++ cung cấp 3 lớp chính:
+- `ifstream` – đọc file
+- `ofstream` – ghi file
+- `fstream` – đọc & ghi
+
+---
+
+## 3️⃣ Ghi file với `ofstream`
+
+### 📌 Cú pháp
+```cpp
+ofstream file;
+file.open("data.txt");
+file << "Hello File";
+file.close();
+```
+
+### 📌 Ví dụ đầy đủ
+```cpp
+#include <iostream>
+#include <fstream>
+using namespace std;
+
+int main() {
+    ofstream file("output.txt");
+    file << "Hoc C++ File IO";
+    file.close();
+    return 0;
+}
+```
+
+📌 Nếu file chưa tồn tại → **tự tạo mới**.
+
+---
+
+## 4️⃣ Đọc file với `ifstream`
+
+### 📌 Ví dụ
+```cpp
+#include <iostream>
+#include <fstream>
+#include <string>
+using namespace std;
+
+int main() {
+    ifstream file("output.txt");
+    string line;
+
+    while (getline(file, line)) {
+        cout << line << endl;
+    }
+
+    file.close();
+    return 0;
+}
+```
+
+---
+
+## 5️⃣ Kiểm tra file mở thành công hay không
+
+```cpp
+ifstream file("data.txt");
+
+if (!file.is_open()) {
+    cout << "Khong mo duoc file";
+    return 0;
+}
+```
+
+📌 Luôn kiểm tra để tránh lỗi.
+
+---
+
+## 6️⃣ Ghi nhiều dòng vào file
+
+```cpp
+ofstream file("numbers.txt");
+
+for (int i = 1; i <= 5; i++) {
+    file << i << endl;
+}
+
+file.close();
+```
+
+---
+
+## 7️⃣ Đọc dữ liệu dạng số
+
+```cpp
+ifstream file("numbers.txt");
+int x;
+
+while (file >> x) {
+    cout << x << " ";
+}
+```
+
+---
+
+## 8️⃣ Sử dụng `fstream` (đọc & ghi)
+
+```cpp
+#include <fstream>
+using namespace std;
+
+int main() {
+    fstream file;
+    file.open("test.txt", ios::out);
+    file << "Hello";
+    file.close();
+
+    file.open("test.txt", ios::in);
+    string s;
+    getline(file, s);
+    cout << s;
+
+    file.close();
+    return 0;
+}
+```
+
+---
+
+## 9️⃣ Các chế độ mở file
+
+| Mode | Ý nghĩa |
+|-----|--------|
+| ios::in | Đọc |
+| ios::out | Ghi |
+| ios::app | Ghi nối |
+| ios::trunc | Xóa nội dung cũ |
+| ios::binary | File nhị phân |
+
+---
+
+## 🔟 Ví dụ thực tế: Lưu danh sách sinh viên
+
+```cpp
+ofstream file("sv.txt", ios::app);
+file << "Nguyen Van A 8.5" << endl;
+file.close();
+```
+
+Đọc lại:
+```cpp
+ifstream file("sv.txt");
+string name;
+float diem;
+
+while (file >> name >> diem) {
+    cout << name << " " << diem << endl;
+}
+```
+
+---
+
+## 1️⃣1️⃣ Lỗi thường gặp ❌
+- Quên `close()`
+- Đường dẫn file sai
+- Đọc file chưa mở
+
+---
+
+## 1️⃣2️⃣ Bài tập thực hành ✍️
+
+### 📝 Bài 1
+Ghi vào file:
+- Các số từ 1 → n
+
+---
+
+### 📝 Bài 2
+Đọc file:
+- Tính tổng các số trong file
+
+---
+
+### 📝 Bài 3
+Lưu và đọc:
+- Danh sách sinh viên
+
+---
+
+## 🧠 Ghi nhớ nhanh
+- `ofstream` → ghi
+- `ifstream` → đọc
+- Luôn kiểm tra mở file
+- Nhớ `close()`
+
+---
+
+## ✅ Tổng kết
+✔️ Bạn đã:
+- Biết đọc / ghi file
+- Sử dụng ifstream / ofstream
+- Áp dụng file vào bài toán thực tế
+
+# Bài 18: Cấu trúc dữ liệu & Thuật toán trong C++ (DSA)
+[:arrow_up: Mục lục](#mục-lục)
+
+---
+
+## 🎯 Mục tiêu bài học
+Sau khi học xong bài này, bạn sẽ:
+- Hiểu **DSA là gì** và vì sao cực kỳ quan trọng
+- Nắm các **cấu trúc dữ liệu cơ bản**
+- Biết các **thuật toán phổ biến**
+- Có nền tảng để học **DSA nâng cao, LeetCode, Codeforces**
+
+---
+
+## 1️⃣ DSA là gì?
+
+👉 **DSA (Data Structures & Algorithms)** là:
+- **Cấu trúc dữ liệu**: Cách tổ chức, lưu trữ dữ liệu
+- **Thuật toán**: Cách xử lý dữ liệu hiệu quả
+
+📌 Một chương trình tốt cần:
+> Dữ liệu đúng + Thuật toán tối ưu
+
+---
+
+## 2️⃣ Tại sao phải học DSA?
+
+✔️ Giải bài toán nhanh hơn  
+✔️ Tối ưu bộ nhớ & thời gian  
+✔️ Thi học kỳ / phỏng vấn  
+✔️ Nền tảng cho AI, hệ thống, backend
+
+---
+
+## 3️⃣ Độ phức tạp thuật toán (Big-O)
+
+👉 **Big-O** đo:
+- Thời gian chạy
+- Bộ nhớ sử dụng
+
+### 📌 Một số Big-O phổ biến
+
+| Big-O | Ý nghĩa |
+|-----|--------|
+| O(1) | Hằng số |
+| O(n) | Tuyến tính |
+| O(log n) | Log |
+| O(n²) | Bậc hai |
+| O(2ⁿ) | Rất chậm |
+
+📌 Ví dụ:
+```cpp
+for (int i = 0; i < n; i++) {} // O(n)
+```
+
+---
+
+## 4️⃣ Cấu trúc dữ liệu tuyến tính
+
+### 🔹 4.1 Array
+- Truy cập nhanh
+- Kích thước cố định
+
+### 🔹 4.2 Vector (STL)
+- Mảng động
+- Linh hoạt
+
+### 🔹 4.3 Linked List
+
+👉 Danh sách liên kết:
+- Node = data + pointer
+
+```cpp
+struct Node {
+    int data;
+    Node* next;
+};
+```
+
+📌 Truy cập chậm hơn mảng nhưng **thêm/xóa linh hoạt**.
+
+---
+
+### 🔹 4.4 Stack (LIFO)
+
+```cpp
+#include <stack>
+stack<int> st;
+st.push(10);
+st.pop();
+```
+
+📌 Dùng trong:
+- Undo / Redo
+- Đệ quy
+
+---
+
+### 🔹 4.5 Queue (FIFO)
+
+```cpp
+#include <queue>
+queue<int> q;
+q.push(10);
+q.pop();
+```
+
+📌 Dùng trong:
+- BFS
+- Hệ thống hàng đợi
+
+---
+
+## 5️⃣ Thuật toán sắp xếp (Sorting)
+
+### ✔️ Bubble Sort
+```cpp
+for (int i = 0; i < n-1; i++)
+    for (int j = 0; j < n-i-1; j++)
+        if (a[j] > a[j+1])
+            swap(a[j], a[j+1]);
+```
+
+- Đơn giản
+- Chậm O(n²)
+
+---
+
+### ✔️ Selection Sort
+- Mỗi lần chọn min
+
+---
+
+### ✔️ Insertion Sort
+- Chèn đúng vị trí
+
+---
+
+### ✔️ Quick Sort (quan trọng)
+
+```cpp
+sort(a, a+n); // STL dùng Quick/Intro sort
+```
+
+📌 Trung bình: O(n log n)
+
+---
+
+## 6️⃣ Thuật toán tìm kiếm
+
+### 🔹 Linear Search – O(n)
+```cpp
+for (int i = 0; i < n; i++)
+    if (a[i] == x) return i;
+```
+
+---
+
+### 🔹 Binary Search – O(log n)
+```cpp
+binary_search(a, a+n, x);
+```
+
+📌 Mảng phải **đã sắp xếp**.
+
+---
+
+## 7️⃣ Cây (Tree) – Binary Search Tree
+
+```cpp
+struct Node {
+    int data;
+    Node *left, *right;
+};
+```
+
+📌 Dùng trong:
+- Tìm kiếm
+- Phân cấp dữ liệu
+
+---
+
+## 8️⃣ Đồ thị (Graph) – Giới thiệu
+
+- Đỉnh (Vertex)
+- Cạnh (Edge)
+
+### ✔️ DFS – BFS
+```cpp
+// DFS: dùng stack / đệ quy
+// BFS: dùng queue
+```
+
+📌 Dùng nhiều trong:
+- AI
+- Mạng
+- Game
+
+---
+
+## 9️⃣ Khi nào dùng cấu trúc nào?
+
+| Bài toán | Gợi ý |
+|--------|-------|
+| Truy cập nhanh | Array / Vector |
+| Thêm xóa nhiều | Linked List |
+| LIFO | Stack |
+| FIFO | Queue |
+| Tìm kiếm nhanh | Tree |
+| Quan hệ phức tạp | Graph |
+
+---
+
+## 🔟 Bài tập thực hành ✍️
+
+### 📝 Bài 1
+Viết chương trình:
+- Sắp xếp mảng bằng Bubble Sort
+
+---
+
+### 📝 Bài 2
+Cài đặt:
+- Linked List cơ bản (thêm, xóa)
+
+---
+
+### 📝 Bài 3
+Viết:
+- Binary Search
+
+---
+
+## 🧠 Ghi nhớ nhanh
+- DSA = nền tảng lập trình
+- Hiểu Big-O trước khi code
+- Ưu tiên STL khi có thể
+
+---
+
+## ✅ Tổng kết
+✔️ Bạn đã:
+- Hiểu tổng quan DSA
+- Biết các cấu trúc dữ liệu chính
+- Sẵn sàng học DSA nâng cao
+
+# Bài 19: Quy hoạch động trong C++ (Dynamic Programming)
+[:arrow_up: Mục lục](#mục-lục)
+
+---
+
+## 🎯 Mục tiêu bài học
+Sau khi học xong bài này, bạn sẽ:
+- Hiểu **quy hoạch động (Dynamic Programming – DP)** là gì
+- Biết khi nào nên dùng DP
+- Phân biệt **Memoization** và **Tabulation**
+- Giải được các bài toán DP kinh điển
+- Có nền tảng để làm bài **DSA nâng cao / thi thuật toán**
+
+---
+
+## 1️⃣ Quy hoạch động là gì?
+
+👉 **Quy hoạch động (DP)** là kỹ thuật:
+- Chia bài toán lớn thành **các bài toán con**
+- **Lưu lại kết quả** bài toán con để không tính lại
+
+📌 DP giúp:
+- Giảm độ phức tạp từ **O(2ⁿ)** → **O(n)** hoặc **O(n·m)**
+
+---
+
+## 2️⃣ Khi nào dùng Quy hoạch động?
+
+Một bài toán dùng DP khi có **2 tính chất**:
+
+### ✔️ Bài toán con chồng chéo
+- Nhiều bài toán con bị lặp lại
+
+### ✔️ Cấu trúc con tối ưu
+- Nghiệm tối ưu của bài toán lớn được tạo từ nghiệm tối ưu của bài toán con
+
+📌 Ví dụ:
+- Fibonacci
+- Balo (Knapsack)
+- Chuỗi con chung dài nhất (LCS)
+
+---
+
+## 3️⃣ Các cách cài đặt DP
+
+### 🔹 3.1 Memoization (Top-down)
+- Đệ quy + mảng nhớ
+- Dễ viết, dễ hiểu
+
+### 🔹 3.2 Tabulation (Bottom-up)
+- Dùng vòng lặp
+- Nhanh hơn, ít tốn stack
+
+---
+
+## 4️⃣ Ví dụ 1: Fibonacci với DP
+
+### ❌ Không dùng DP (chậm)
+```cpp
+int fib(int n) {
+    if (n <= 1) return n;
+    return fib(n-1) + fib(n-2);
+}
+```
+
+---
+
+### ✅ Memoization
+```cpp
+int dp[1000];
+
+int fib(int n) {
+    if (n <= 1) return n;
+    if (dp[n] != -1) return dp[n];
+    dp[n] = fib(n-1) + fib(n-2);
+    return dp[n];
+}
+```
+
+---
+
+### ✅ Tabulation
+```cpp
+int fib(int n) {
+    int dp[1000];
+    dp[0] = 0;
+    dp[1] = 1;
+    for (int i = 2; i <= n; i++) {
+        dp[i] = dp[i-1] + dp[i-2];
+    }
+    return dp[n];
+}
+```
+
+---
+
+## 5️⃣ Ví dụ 2: Bài toán Balo 0/1 (Knapsack)
+
+### Bài toán
+- n vật
+- Mỗi vật có trọng lượng `w[i]` và giá trị `v[i]`
+- Balo có sức chứa `W`
+- Tối đa hóa tổng giá trị
+
+---
+
+### Công thức DP
+```
+dp[i][j] = giá trị lớn nhất
+khi xét i vật, balo có sức chứa j
+```
+
+---
+
+### Code
+```cpp
+int knapsack(int W, int w[], int v[], int n) {
+    int dp[n+1][W+1];
+
+    for (int i = 0; i <= n; i++) {
+        for (int j = 0; j <= W; j++) {
+            if (i == 0 || j == 0)
+                dp[i][j] = 0;
+            else if (w[i-1] <= j)
+                dp[i][j] = max(v[i-1] + dp[i-1][j - w[i-1]],
+                               dp[i-1][j]);
+            else
+                dp[i][j] = dp[i-1][j];
+        }
+    }
+    return dp[n][W];
+}
+```
+
+---
+
+## 6️⃣ Ví dụ 3: Dãy con chung dài nhất (LCS)
+
+### Công thức
+```
+dp[i][j] = LCS của s1[0..i-1] và s2[0..j-1]
+```
+
+---
+
+### Code rút gọn
+```cpp
+int lcs(string a, string b) {
+    int n = a.size(), m = b.size();
+    int dp[n+1][m+1];
+
+    for (int i = 0; i <= n; i++) {
+        for (int j = 0; j <= m; j++) {
+            if (i == 0 || j == 0)
+                dp[i][j] = 0;
+            else if (a[i-1] == b[j-1])
+                dp[i][j] = dp[i-1][j-1] + 1;
+            else
+                dp[i][j] = max(dp[i-1][j], dp[i][j-1]);
+        }
+    }
+    return dp[n][m];
+}
+```
+
+---
+
+## 7️⃣ So sánh DP và đệ quy thường
+
+| Tiêu chí | Đệ quy | Quy hoạch động |
+|--------|--------|----------------|
+| Tốc độ | Chậm | Nhanh |
+| Trùng lặp | Có | Không |
+| Bộ nhớ | Ít | Nhiều hơn |
+| Ứng dụng | Nhỏ | Bài toán lớn |
+
+---
+
+## 8️⃣ Kỹ năng giải bài DP (RẤT QUAN TRỌNG)
+
+📌 Các bước chuẩn:
+1. Xác định **trạng thái dp**
+2. Xác định **công thức chuyển**
+3. Xác định **điều kiện khởi tạo**
+4. Xác định **thứ tự tính**
+
+---
+
+## 9️⃣ Bài tập thực hành ✍️
+
+### 📝 Bài 1
+Giải bài:
+- Fibonacci
+- Có DP và không DP
+- So sánh thời gian
+
+---
+
+### 📝 Bài 2
+Giải:
+- Balo 0/1
+
+---
+
+### 📝 Bài 3
+Giải:
+- LCS (chuỗi con chung dài nhất)
+
+---
+
+## 🧠 Ghi nhớ nhanh
+- DP = lưu kết quả bài toán con
+- Luôn xác định trạng thái dp
+- Ưu tiên Tabulation khi có thể
+
+---
+
+## ✅ Tổng kết
+✔️ Bạn đã:
+- Hiểu rõ Quy hoạch động
+- Biết cách cài đặt DP
+- Sẵn sàng làm bài thuật toán nâng cao
 
 
