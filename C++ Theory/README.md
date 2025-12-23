@@ -1,6 +1,12 @@
 # C++
+# Mục lục
+- [Bài 01: Giới thiệu C++](#bài-01-giới-thiệu-c)
+- [Bài 02: Biến và Kiểu dữ liệu trong C++](#bài-02-biến-và-kiểu-dữ-liệu-trong-c)
+- [Bài 03: Toán tử trong C++](#bài-03-toán-tử-trong-c)
+- [Bài 04: Nhập xuất dữ liệu](#bài-04-nhập-xuất-dữ-liệu)
 
 # Bài 01: Giới thiệu C++
+[:arrow_up: Mục lục](#mục-lục)
 
 ---
 
@@ -166,6 +172,7 @@ Trường: ...
 - Viết chương trình đầu tiên
 
 # Bài 02: Biến và Kiểu dữ liệu trong C++
+[:arrow_up: Mục lục](#mục-lục)
 
 ---
 
@@ -362,6 +369,7 @@ Tại sao cần ép kiểu khi chia 2 số nguyên?
 - Biết ép kiểu trong C++
 
 # Bài 03: Toán tử trong C++
+[:arrow_up: Mục lục](#mục-lục)
 
 ---
 
@@ -578,6 +586,7 @@ Nhập điểm trung bình, dùng toán tử ba ngôi để:
 - Tránh lỗi logic cơ bản
 
 # Bài 04: Nhập và Xuất dữ liệu trong C++
+[:arrow_up: Mục lục](#mục-lục)
 
 ---
 
