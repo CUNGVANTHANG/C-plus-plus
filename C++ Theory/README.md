@@ -1,4 +1,4 @@
-# C++
+# C++ cơ bản
 # Mục lục
 - [Bài 01: Giới thiệu C++](#bài-01-giới-thiệu-c)
 - [Bài 02: Biến và Kiểu dữ liệu trong C++](#bài-02-biến-và-kiểu-dữ-liệu-trong-c)
