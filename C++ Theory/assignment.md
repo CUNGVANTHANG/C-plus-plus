@@ -372,3 +372,179 @@ n - 3 = 3
 
 ✅ Kết luận: **Sắp xếp + tìm đoạn con tổng 0 dài nhất**, đáp án = `n - maxLen`.
 
+# CHUYẾN ĐI (TRIP.CPP) — Lời giải (cơ bản, dễ viết; không dùng `vector`)
+
+## 1) Tóm tắt đề bài
+Có `n` học sinh đến trường tại các thời điểm `a1, a2, ..., an` (nguyên không âm).  
+Giáo sư chọn thời điểm phóng **con tàu đầu tiên** là `t0`. Các lần phóng sau cách nhau đúng `Δ` giây:
+
+\[ t0,\ t0+Δ,\ t0+2Δ,\ ... \]
+
+- Nếu học sinh đến **trước hoặc đúng** thời điểm phóng, bạn ấy lên tàu chuyến đó.
+- Nếu đến **sau** thời điểm phóng, phải đợi chuyến kế tiếp.
+
+**Thời gian chờ** của học sinh i = (thời điểm tàu mà i lên) − (thời điểm i đến).
+
+Yêu cầu: chọn `t0` sao cho **tổng thời gian chờ** là nhỏ nhất, và in ra tổng nhỏ nhất đó.
+
+Ràng buộc: `n ≤ 10^5`, `Δ ≤ 10^9`, `ai ≤ 10^9`.
+
+---
+
+## 2) Nhận xét quan trọng (mấu chốt)
+Một học sinh đến lúc `ai` sẽ lên chuyến tàu đầu tiên **không sớm hơn ai** trong dãy:
+\[ t0 + kΔ \]
+
+Thời gian chờ chính là “khoảng cách đi tới phía trước” trên trục số theo bước `Δ`.
+
+### Đưa về dạng “theo dư modulo Δ”
+Xét **phần dư**:
+\[ r_i = a_i \bmod Δ \]
+với `0 ≤ r_i < Δ`.
+
+Nếu ta chọn `t0` trong khoảng `0..Δ-1`, thì thời gian chờ của học sinh i là:
+\[ w_i(t0) = (t0 - r_i + Δ) \bmod Δ \]
+
+✅ Công thức này đúng cho cả trường hợp `ai ≤ t0` (khi đó chờ = `t0 - ai`, vì `r_i = ai` nếu `ai < Δ`, và modulo ra đúng).
+
+> Quan trọng: Ta luôn có thể “kéo” `t0` về `0..Δ-1` (trừ đi bội của Δ) mà không làm tổng chờ tăng.  
+Vì các chuyến tàu lặp lại mỗi `Δ`, nên chỉ cần xét `t0` theo **dư modulo Δ**.
+
+➡️ Bài toán trở thành:
+
+> Chọn `t0` trong `[0, Δ-1]` để tối thiểu hóa:
+\[ S(t0) = \sum_{i=1}^{n} (t0 - r_i + Δ) \bmod Δ \]
+
+---
+
+## 3) Biến đổi công thức để tính nhanh
+Với một `t0` cố định:
+- Nếu `r_i ≤ t0` thì `(t0 - r_i + Δ) mod Δ = t0 - r_i`
+- Nếu `r_i > t0` thì `(t0 - r_i + Δ) mod Δ = t0 - r_i + Δ`
+
+Gọi:
+- `c =` số lượng `r_i ≤ t0`
+- `sumR = Σ r_i`
+
+Khi đó:
+\[
+S(t0) = \sum(t0 - r_i) + Δ \cdot (n - c)
+= t0\cdot n - \sumR + Δ\cdot(n - c)
+\]
+
+Vậy nếu biết `c` (đếm bao nhiêu dư ≤ t0) thì tính được `S(t0)` rất nhanh.
+
+---
+
+## 4) Chỉ cần thử t0 ở đâu?
+Nếu ta tăng `t0` trong khoảng giữa hai giá trị dư liên tiếp, `c` không đổi, và `S(t0)` tăng tuyến tính theo `t0`.  
+Vì vậy **điểm nhỏ nhất** sẽ rơi vào **một giá trị dư r_i** (hoặc 0).
+
+➡️ Cách làm:
+1. Tính mảng dư `r[i] = a[i] % Δ`
+2. Sắp xếp `r[]` tăng dần
+3. Duyệt các giá trị `t0 = r[i]` (theo từng nhóm trùng nhau) và tính `S(t0)` bằng công thức ở trên
+4. Lấy min
+
+---
+
+## 5) Độ phức tạp
+- Tính dư + sắp xếp: `O(n log n)`
+- Duyệt: `O(n)`
+
+Phù hợp với `n ≤ 10^5`.
+
+---
+
+## 6) Code C++ (truyền thống, không dùng `vector`)
+
+```cpp
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    int n;
+    long long D;
+    cin >> n >> D;
+
+    long long *r = new long long[n];
+    long long sumR = 0;
+
+    for (int i = 0; i < n; i++) {
+        long long a;
+        cin >> a;
+        r[i] = a % D;
+        sumR += r[i];
+    }
+
+    sort(r, r + n);
+
+    long long best = (long long)4e18;
+
+    // Duyệt theo từng giá trị dư (gộp các phần tử trùng nhau)
+    int i = 0;
+    while (i < n) {
+        long long t0 = r[i];
+
+        // c = số lượng r <= t0  (tức là vị trí sau nhóm trùng nhau)
+        int j = i;
+        while (j < n && r[j] == t0) j++;
+        int c = j; // vì r đã sort, các phần tử [0..j-1] <= t0
+
+        // S(t0) = t0*n - sumR + D*(n - c)
+        long long S = t0 * (long long)n - sumR + D * (long long)(n - c);
+
+        if (S < best) best = S;
+        i = j;
+    }
+
+    // Cũng có thể xét t0 = 0 (trường hợp dư nhỏ nhất không phải 0)
+    // Với t0 = 0 => c = số r == 0 (vì chỉ r <= 0)
+    int c0 = 0;
+    while (c0 < n && r[c0] == 0) c0++;
+    long long S0 = 0LL * (long long)n - sumR + D * (long long)(n - c0);
+    if (S0 < best) best = S0;
+
+    cout << best;
+
+    delete[] r;
+    return 0;
+}
+```
+
+---
+
+## 7) Ví dụ trong đề
+Input:
+```
+5 4
+9 3 7 6 11
+```
+Tính dư mod 4:
+- 9 → 1
+- 3 → 3
+- 7 → 3
+- 6 → 2
+- 11 → 3
+Dư: `1,2,3,3,3`
+
+Thử `t0 = 3`:
+- (3-1)=2
+- (3-2)=1
+- (3-3)=0
+- (3-3)=0
+- (3-3)=0
+Tổng = 3 ✅
+
+Output:
+```
+3
+```
+
+---
+
+✅ Kết luận: Chỉ cần lấy dư `ai % Δ`, sắp xếp, thử `t0` tại các giá trị dư để tìm tổng chờ nhỏ nhất.
+
