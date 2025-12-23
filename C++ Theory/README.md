@@ -4,8 +4,19 @@
 - [Bài 02: Biến và Kiểu dữ liệu trong C++](#bài-02-biến-và-kiểu-dữ-liệu-trong-c)
 - [Bài 03: Toán tử trong C++](#bài-03-toán-tử-trong-c)
 - [Bài 04: Nhập và Xuất dữ liệu trong C++](#bài-04-nhập-và-xuất-dữ-liệu-trong-c)
-- [Bài 05: Câu điều kiện trong C++ (if / else / switch)]()
-- 
+- [Bài 05: Câu điều kiện trong C++ (if / else / switch)](#bài-05-câu-điều-kiện-trong-c-if--else--switch)
+- [Bài 06: Vòng lặp trong C++ (for / while / do-while)]()
+- [Bài 07: Mảng trong C++ (Mảng 1 chiều & Mảng 2 chiều)]()
+- [Bài 08: Chuỗi trong C++ (String)]()
+- [Bài 09: Hàm trong C++ (Function)]()
+- [Bài 10: Con trỏ trong C++ (Pointer)]()
+- [Bài 11: Cấp phát động trong C++ (new / delete)]()
+- [Bài 12: Lập trình hướng đối tượng trong C++ (Class & Object)]()
+- []()
+- []()
+- []()
+- []()
+
 
 # Bài 01: Giới thiệu C++
 [:arrow_up: Mục lục](#mục-lục)
@@ -1773,5 +1784,1151 @@ Kiểm tra chuỗi đối xứng (Palindrome).
 - Biết dùng `char[]` và `string`
 - Xử lý chuỗi cơ bản
 
+# Bài 09: Hàm trong C++ (Function)
+[:arrow_up: Mục lục](#mục-lục)
+
+---
+
+## 🎯 Mục tiêu bài học
+Sau khi học xong bài này, bạn sẽ:
+- Hiểu **hàm là gì** và vì sao cần dùng hàm
+- Biết **khai báo, định nghĩa và gọi hàm**
+- Phân biệt **tham trị và tham chiếu**
+- Viết được chương trình có cấu trúc rõ ràng
+
+---
+
+## 1️⃣ Hàm là gì?
+
+👉 **Hàm (Function)** là một khối lệnh thực hiện **một công việc cụ thể**, có thể:
+- Nhận dữ liệu đầu vào (tham số)
+- Trả về kết quả
+
+📌 Dùng hàm để:
+- Tránh lặp code
+- Chia nhỏ chương trình
+- Dễ bảo trì, dễ mở rộng
+
+---
+
+## 2️⃣ Cấu trúc một hàm trong C++
+
+### Cú pháp tổng quát
+```cpp
+kieu_tra_ve ten_ham(danh_sach_tham_so) {
+    // thân hàm
+    return gia_tri;
+}
+```
+
+---
+
+## 3️⃣ Ví dụ hàm đơn giản
+
+```cpp
+int tong(int a, int b) {
+    return a + b;
+}
+
+int main() {
+    cout << tong(3, 5);
+    return 0;
+}
+```
+
+📌 Hàm `tong`:
+- Nhận 2 tham số `a`, `b`
+- Trả về tổng
+
+---
+
+## 4️⃣ Hàm không có giá trị trả về (`void`)
+
+```cpp
+void xinChao() {
+    cout << "Xin chao C++";
+}
+
+int main() {
+    xinChao();
+    return 0;
+}
+```
+
+📌 `void` → không trả về gì.
+
+---
+
+## 5️⃣ Tham số và đối số
+
+```cpp
+int tong(int a, int b) // a, b: tham số
+```
+
+```cpp
+tong(3, 5); // 3, 5: đối số
+```
+
+---
+
+## 6️⃣ Tham trị (Pass by Value)
+
+👉 Hàm **nhận bản sao** của biến.
+
+```cpp
+void tang(int x) {
+    x++;
+}
+
+int main() {
+    int a = 5;
+    tang(a);
+    cout << a; // vẫn là 5
+}
+```
+
+📌 Giá trị gốc **không đổi**.
+
+---
+
+## 7️⃣ Tham chiếu (Pass by Reference)
+
+👉 Hàm nhận **địa chỉ của biến**.
+
+```cpp
+void tang(int &x) {
+    x++;
+}
+
+int main() {
+    int a = 5;
+    tang(a);
+    cout << a; // 6
+}
+```
+
+📌 Giá trị gốc **bị thay đổi**.
+
+---
+
+## 8️⃣ So sánh tham trị và tham chiếu
+
+| Tiêu chí | Tham trị | Tham chiếu |
+|-------|--------|-----------|
+| Thay đổi biến gốc | ❌ | ✅ |
+| An toàn | Cao | Thấp hơn |
+| Hiệu năng | Thấp hơn | Cao hơn |
+
+---
+
+## 9️⃣ Hàm có nhiều tham số
+
+```cpp
+float diemTrungBinh(float a, float b, float c) {
+    return (a + b + c) / 3;
+}
+```
+
+---
+
+## 🔟 Hàm với mảng
+
+```cpp
+void nhapMang(int a[], int n) {
+    for (int i = 0; i < n; i++) {
+        cin >> a[i];
+    }
+}
+```
+
+📌 Khi truyền mảng → thực chất là **truyền địa chỉ**.
+
+---
+
+## 1️⃣1️⃣ Khai báo hàm trước `main`
+
+```cpp
+int tong(int a, int b);
+
+int main() {
+    cout << tong(2, 3);
+}
+
+int tong(int a, int b) {
+    return a + b;
+}
+```
+
+---
+
+## 1️⃣2️⃣ Bài tập thực hành ✍️
+
+### 📝 Bài 1
+Viết hàm:
+- Tính tổng 2 số
+- Tính hiệu 2 số
+
+---
+
+### 📝 Bài 2
+Viết hàm kiểm tra:
+- Số nguyên tố
+
+---
+
+### 📝 Bài 3
+Viết hàm:
+- Nhập mảng
+- Xuất mảng
+- Tính tổng mảng
+
+---
+
+## ❌ Lỗi thường gặp
+- Quên `return`
+- Nhầm tham trị và tham chiếu
+- Khai báo hàm sau `main` mà không prototype
+
+---
+
+## 🧠 Ghi nhớ nhanh
+- Hàm giúp code gọn & rõ ràng
+- Tham trị không đổi biến gốc
+- Tham chiếu làm thay đổi biến gốc
+- Luôn chia nhỏ chương trình bằng hàm
+
+---
+
+## ✅ Tổng kết
+✔️ Bạn đã:
+- Hiểu rõ hàm trong C++
+- Biết truyền tham số
+- Viết chương trình có cấu trúc
+
+# Bài 10: Con trỏ trong C++ (Pointer)
+[:arrow_up: Mục lục](#mục-lục)
+
+---
+
+## 🎯 Mục tiêu bài học
+Sau khi học xong bài này, bạn sẽ:
+- Hiểu **con trỏ là gì**
+- Biết cách **khai báo và sử dụng con trỏ**
+- Hiểu mối quan hệ giữa **con trỏ – biến – bộ nhớ**
+- Ứng dụng con trỏ với **hàm và mảng**
+
+---
+
+## 1️⃣ Con trỏ là gì?
+
+👉 **Con trỏ (Pointer)** là biến dùng để **lưu địa chỉ của biến khác** trong bộ nhớ.
+
+Ví dụ:
+```cpp
+int a = 10;
+int *p = &a;
+```
+
+- `a` : biến bình thường
+- `&a` : địa chỉ của biến `a`
+- `p` : con trỏ trỏ tới `a`
+
+---
+
+## 2️⃣ Khai báo con trỏ
+
+### Cú pháp
+```cpp
+kieu_du_lieu *ten_con_tro;
+```
+
+### 📌 Ví dụ
+```cpp
+int *p;
+float *q;
+char *c;
+```
+
+---
+
+## 3️⃣ Toán tử `&` và `*`
+
+| Toán tử | Ý nghĩa |
+|-------|--------|
+| & | Lấy địa chỉ |
+| * | Truy cập giá trị tại địa chỉ |
+
+### 📌 Ví dụ
+```cpp
+int a = 5;
+int *p = &a;
+
+cout << p;   // địa chỉ của a
+cout << *p;  // giá trị của a (5)
+```
+
+---
+
+## 4️⃣ Thay đổi giá trị thông qua con trỏ
+
+```cpp
+int a = 10;
+int *p = &a;
+
+*p = 20;
+cout << a; // 20
+```
+
+📌 Thay đổi qua con trỏ → biến gốc đổi theo.
+
+---
+
+## 5️⃣ Con trỏ và hàm
+
+### 📌 Ví dụ hoán đổi 2 số (pointer)
+
+```cpp
+void swap(int *a, int *b) {
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+int main() {
+    int x = 5, y = 10;
+    swap(&x, &y);
+    cout << x << " " << y;
+}
+```
+
+📌 So sánh với **tham chiếu**:
+- Pointer → truyền địa chỉ
+- Reference → cú pháp gọn hơn
+
+---
+
+## 6️⃣ Con trỏ và mảng
+
+👉 Tên mảng chính là **địa chỉ phần tử đầu tiên**.
+
+```cpp
+int a[3] = {10, 20, 30};
+int *p = a;
+
+cout << *p;      // 10
+cout << *(p+1);  // 20
+cout << *(p+2);  // 30
+```
+
+---
+
+## 7️⃣ Duyệt mảng bằng con trỏ
+
+```cpp
+for (int i = 0; i < 3; i++) {
+    cout << *(p + i) << " ";
+}
+```
+
+---
+
+## 8️⃣ Con trỏ NULL
+
+```cpp
+int *p = NULL;
+```
+
+📌 Tránh trỏ vào vùng nhớ rác.
+
+(C++ hiện đại dùng `nullptr`)
+
+```cpp
+int *p = nullptr;
+```
+
+---
+
+## 9️⃣ Con trỏ cấp hai (Pointer to Pointer)
+
+```cpp
+int a = 5;
+int *p = &a;
+int **pp = &p;
+
+cout << **pp; // 5
+```
+
+---
+
+## 🔟 Lỗi thường gặp ❌
+- Dùng con trỏ chưa khởi tạo
+- Truy cập vùng nhớ không hợp lệ
+- Nhầm `*p` và `p`
+
+---
+
+## 🧠 Ghi nhớ nhanh
+- Con trỏ lưu **địa chỉ**
+- `*p` truy cập giá trị
+- Cẩn thận lỗi bộ nhớ
+- Nền tảng cho cấp phát động
+
+---
+
+## 1️⃣1️⃣ Bài tập thực hành ✍️
+
+### 📝 Bài 1
+Viết chương trình:
+- Nhập 2 số
+- Hoán đổi bằng con trỏ
+
+---
+
+### 📝 Bài 2
+Dùng con trỏ để:
+- Nhập mảng
+- Xuất mảng
+
+---
+
+### 📝 Bài 3 (tư duy)
+So sánh **con trỏ** và **tham chiếu**.
+
+---
+
+## ✅ Tổng kết
+✔️ Bạn đã:
+- Hiểu rõ con trỏ
+- Biết thao tác bộ nhớ
+- Sẵn sàng học cấp phát động
+
+# Bài 11: Cấp phát động trong C++ (new / delete)
+[:arrow_up: Mục lục](#mục-lục)
+
+---
+
+## 🎯 Mục tiêu bài học
+Sau khi học xong bài này, bạn sẽ:
+- Hiểu **cấp phát động là gì** và vì sao cần dùng
+- Biết sử dụng **new / delete**
+- Hiểu sự khác nhau giữa **cấp phát tĩnh và cấp phát động**
+- Ứng dụng cấp phát động với **mảng và con trỏ**
+
+---
+
+## 1️⃣ Cấp phát bộ nhớ là gì?
+
+👉 **Cấp phát bộ nhớ** là việc **xin vùng nhớ trong RAM** để lưu trữ dữ liệu.
+
+Trong C++ có 2 loại:
+- **Cấp phát tĩnh** (stack)
+- **Cấp phát động** (heap)
+
+---
+
+## 2️⃣ Cấp phát tĩnh (Stack)
+
+```cpp
+int a = 10;
+int b[5];
+```
+
+📌 Đặc điểm:
+- Kích thước **cố định**
+- Tự động giải phóng khi ra khỏi scope
+- Nhanh nhưng **kém linh hoạt**
+
+---
+
+## 3️⃣ Cấp phát động (Heap)
+
+👉 Dùng khi:
+- Chưa biết trước kích thước
+- Dữ liệu lớn
+- Cần tồn tại lâu
+
+Cấp phát động dùng:
+- `new`
+- `delete`
+
+---
+
+## 4️⃣ Cấp phát động cho biến đơn
+
+### 📌 Cú pháp
+```cpp
+int *p = new int;
+```
+
+### 📌 Ví dụ
+```cpp
+int *p = new int;
+*p = 100;
+
+cout << *p;
+```
+
+---
+
+## 5️⃣ Giải phóng bộ nhớ – `delete`
+
+```cpp
+delete p;
+p = nullptr;
+```
+
+📌 **Luôn giải phóng bộ nhớ** sau khi dùng để tránh rò rỉ bộ nhớ.
+
+---
+
+## 6️⃣ Cấp phát động cho mảng
+
+### 📌 Cú pháp
+```cpp
+int *a = new int[n];
+```
+
+### 📌 Ví dụ
+```cpp
+int n;
+cin >> n;
+
+int *a = new int[n];
+
+for (int i = 0; i < n; i++) {
+    cin >> a[i];
+}
+
+for (int i = 0; i < n; i++) {
+    cout << a[i] << " ";
+}
+
+delete[] a;
+a = nullptr;
+```
+
+---
+
+## 7️⃣ So sánh cấp phát tĩnh và động
+
+| Tiêu chí | Tĩnh | Động |
+|-------|------|------|
+| Bộ nhớ | Stack | Heap |
+| Kích thước | Cố định | Linh hoạt |
+| Giải phóng | Tự động | Thủ công |
+| Độ an toàn | Cao | Thấp hơn |
+
+---
+
+## 8️⃣ Lỗi thường gặp ❌
+
+### ❌ Quên delete
+```cpp
+int *p = new int;
+// quên delete
+```
+
+### ❌ Delete sai cách
+```cpp
+delete a; // sai, phải dùng delete[]
+```
+
+---
+
+## 9️⃣ Ví dụ thực tế: Nhập mảng động
+
+```cpp
+#include <iostream>
+using namespace std;
+
+int main() {
+    int n;
+    cout << "Nhap n: ";
+    cin >> n;
+
+    int *a = new int[n];
+
+    for (int i = 0; i < n; i++) {
+        cin >> a[i];
+    }
+
+    cout << "Mang: ";
+    for (int i = 0; i < n; i++) {
+        cout << a[i] << " ";
+    }
+
+    delete[] a;
+    a = nullptr;
+
+    return 0;
+}
+```
+
+---
+
+## 🔟 Khi nào nên dùng cấp phát động?
+
+✔️ Khi:
+- Kích thước nhập từ người dùng
+- Dữ liệu lớn
+- Làm cấu trúc dữ liệu (Linked List, Tree)
+
+❌ Không nên dùng khi:
+- Dữ liệu nhỏ
+- Dùng tạm thời
+
+---
+
+## 1️⃣1️⃣ Bài tập thực hành ✍️
+
+### 📝 Bài 1
+Nhập `n`, cấp phát mảng động, tìm:
+- Max
+- Min
+
+---
+
+### 📝 Bài 2
+Viết chương trình:
+- Nhập danh sách sinh viên (tên, điểm) bằng cấp phát động
+
+---
+
+### 📝 Bài 3 (tư duy)
+Vì sao quên `delete` gây rò rỉ bộ nhớ?
+
+---
+
+## 🧠 Ghi nhớ nhanh
+- `new` → cấp phát
+- `delete` → giải phóng
+- Mảng → `delete[]`
+- Luôn gán `nullptr` sau delete
+
+---
+
+## ✅ Tổng kết
+✔️ Bạn đã:
+- Hiểu cấp phát động
+- Biết dùng new / delete
+- Sẵn sàng học OOP & DSA
+
+# Bài 12: Lập trình hướng đối tượng trong C++ (Class & Object)
+[:arrow_up: Mục lục](#mục-lục)
+
+---
+
+## 🎯 Mục tiêu bài học
+Sau khi học xong bài này, bạn sẽ:
+- Hiểu **lập trình hướng đối tượng (OOP)** là gì
+- Biết **class** và **object** trong C++
+- Sử dụng **thuộc tính (attribute)** và **phương thức (method)**
+- Hiểu **constructor** và **destructor**
+- Viết được chương trình OOP đơn giản
+
+---
+
+## 1️⃣ Lập trình hướng đối tượng (OOP) là gì?
+
+👉 **OOP (Object-Oriented Programming)** là phương pháp lập trình dựa trên:
+- **Đối tượng (Object)**
+- **Lớp (Class)**
+
+📌 OOP giúp:
+- Code dễ hiểu
+- Dễ mở rộng
+- Dễ bảo trì
+- Gần với tư duy thực tế
+
+---
+
+## 2️⃣ Class là gì?
+
+👉 **Class** là bản thiết kế (khuôn mẫu) để tạo ra các đối tượng.
+
+Ví dụ:
+- Class: `SinhVien`
+- Object: `sv1`, `sv2`
+
+---
+
+## 3️⃣ Object là gì?
+
+👉 **Object** là một thể hiện (instance) của class.
+
+```cpp
+SinhVien sv1;
+```
+
+---
+
+## 4️⃣ Cấu trúc một class trong C++
+
+```cpp
+class TenClass {
+private:
+    // thuộc tính riêng
+public:
+    // phương thức công khai
+};
+```
+
+---
+
+## 5️⃣ Ví dụ class đơn giản
+
+```cpp
+#include <iostream>
+#include <string>
+using namespace std;
+
+class SinhVien {
+public:
+    string ten;
+    int tuoi;
+
+    void nhap() {
+        getline(cin, ten);
+        cin >> tuoi;
+    }
+
+    void xuat() {
+        cout << "Ten: " << ten << endl;
+        cout << "Tuoi: " << tuoi << endl;
+    }
+};
+
+int main() {
+    SinhVien sv;
+    sv.nhap();
+    sv.xuat();
+    return 0;
+}
+```
+
+---
+
+## 6️⃣ Thuộc tính và phương thức
+
+- **Thuộc tính (attribute)**: dữ liệu
+- **Phương thức (method)**: hành vi
+
+📌 Gọi bằng dấu chấm `.`
+```cpp
+sv.ten = "An";
+sv.xuat();
+```
+
+---
+
+## 7️⃣ Phạm vi truy cập (Access Modifier)
+
+| Từ khóa | Ý nghĩa |
+|-------|--------|
+| public | Truy cập mọi nơi |
+| private | Chỉ trong class |
+| protected | Dùng cho kế thừa |
+
+📌 Thực tế: **thuộc tính nên để private**.
+
+---
+
+## 8️⃣ Constructor (Hàm khởi tạo)
+
+👉 **Constructor** là hàm:
+- Tự động chạy khi object được tạo
+- Tên trùng tên class
+- Không có kiểu trả về
+
+### 📌 Ví dụ
+```cpp
+class SinhVien {
+public:
+    string ten;
+    int tuoi;
+
+    SinhVien() {
+        ten = "";
+        tuoi = 0;
+    }
+};
+```
+
+---
+
+### Constructor có tham số
+
+```cpp
+SinhVien(string t, int age) {
+    ten = t;
+    tuoi = age;
+}
+```
+
+Sử dụng:
+```cpp
+SinhVien sv("Nam", 20);
+```
+
+---
+
+## 9️⃣ Destructor (Hàm hủy)
+
+👉 **Destructor**:
+- Tự động gọi khi object bị hủy
+- Dùng để giải phóng tài nguyên
+
+```cpp
+~SinhVien() {
+    cout << "Huy doi tuong";
+}
+```
+
+---
+
+## 🔟 Class và con trỏ
+
+```cpp
+SinhVien *sv = new SinhVien("Lan", 21);
+sv->xuat();
+delete sv;
+```
+
+📌 `->` dùng khi truy cập qua con trỏ.
+
+---
+
+## 1️⃣1️⃣ Ví dụ hoàn chỉnh
+
+```cpp
+#include <iostream>
+#include <string>
+using namespace std;
+
+class SinhVien {
+private:
+    string ten;
+    int tuoi;
+public:
+    SinhVien(string t, int age) {
+        ten = t;
+        tuoi = age;
+    }
+
+    void xuat() {
+        cout << "Ten: " << ten << endl;
+        cout << "Tuoi: " << tuoi << endl;
+    }
+};
+
+int main() {
+    SinhVien sv("Minh", 22);
+    sv.xuat();
+    return 0;
+}
+```
+
+---
+
+## 1️⃣2️⃣ Bài tập thực hành ✍️
+
+### 📝 Bài 1
+Tạo class `HinhChuNhat`:
+- Thuộc tính: dài, rộng
+- Phương thức: tính diện tích, chu vi
+
+---
+
+### 📝 Bài 2
+Tạo class `SinhVien`:
+- Tên, điểm
+- Hàm xếp loại
+
+---
+
+### 📝 Bài 3 (tư duy)
+Vì sao nên để thuộc tính là `private`?
+
+---
+
+## ❌ Lỗi thường gặp
+- Quên dấu `;` sau class
+- Nhầm constructor là hàm thường
+- Truy cập trực tiếp thuộc tính private
+
+---
+
+## 🧠 Ghi nhớ nhanh
+- Class = khuôn mẫu
+- Object = đối tượng
+- Constructor tự chạy
+- Dùng `.` hoặc `->`
+
+---
+
+## ✅ Tổng kết
+✔️ Bạn đã:
+- Hiểu OOP
+- Dùng class & object
+- Sử dụng constructor, destructor
+
+# Bài 13: Kế thừa trong C++ (Inheritance)
+[:arrow_up: Mục lục](#mục-lục)
+
+---
+
+## 🎯 Mục tiêu bài học
+Sau khi học xong bài này, bạn sẽ:
+- Hiểu **kế thừa (Inheritance)** là gì
+- Biết cách **tạo class con kế thừa class cha**
+- Sử dụng được **protected**
+- Hiểu **ghi đè phương thức (override)**
+- Áp dụng kế thừa vào bài toán thực tế
+
+---
+
+## 1️⃣ Kế thừa là gì?
+
+👉 **Kế thừa (Inheritance)** cho phép:
+- Class con **kế thừa thuộc tính và phương thức** của class cha
+- Tái sử dụng code
+- Mở rộng chức năng
+
+📌 Ví dụ thực tế:
+- Class cha: `Nguoi`
+- Class con: `SinhVien`, `GiangVien`
+
+---
+
+## 2️⃣ Cú pháp kế thừa trong C++
+
+```cpp
+class Con : public Cha {
+    // nội dung class con
+};
+```
+
+📌 Từ khóa:
+- `public` → kiểu kế thừa (hay dùng nhất)
+
+---
+
+## 3️⃣ Ví dụ cơ bản về kế thừa
+
+```cpp
+#include <iostream>
+using namespace std;
+
+class Nguoi {
+public:
+    string ten;
+    int tuoi;
+
+    void nhap() {
+        getline(cin, ten);
+        cin >> tuoi;
+    }
+
+    void xuat() {
+        cout << "Ten: " << ten << endl;
+        cout << "Tuoi: " << tuoi << endl;
+    }
+};
+
+class SinhVien : public Nguoi {
+public:
+    float diem;
+
+    void nhap() {
+        Nguoi::nhap();
+        cin >> diem;
+    }
+
+    void xuat() {
+        Nguoi::xuat();
+        cout << "Diem: " << diem << endl;
+    }
+};
+
+int main() {
+    SinhVien sv;
+    sv.nhap();
+    sv.xuat();
+    return 0;
+}
+```
+
+---
+
+## 4️⃣ Phạm vi truy cập và kế thừa
+
+| Từ khóa | Ý nghĩa |
+|--------|--------|
+| public | Truy cập mọi nơi |
+| protected | Chỉ class cha & con |
+| private | Chỉ class cha |
+
+📌 Lưu ý:
+- **Thuộc tính nên để protected** nếu muốn class con dùng
+- `private` không truy cập được từ class con
+
+---
+
+## 5️⃣ Kế thừa public / protected / private
+
+```cpp
+class Con : public Cha
+class Con : protected Cha
+class Con : private Cha
+```
+
+📌 Thực tế:
+- **90% dùng `public`**
+
+---
+
+## 6️⃣ Ghi đè phương thức (Override)
+
+👉 Class con có thể **viết lại phương thức** của class cha.
+
+```cpp
+class Cha {
+public:
+    void hello() {
+        cout << "Hello Cha";
+    }
+};
+
+class Con : public Cha {
+public:
+    void hello() {
+        cout << "Hello Con";
+    }
+};
+```
+
+📌 Gọi:
+```cpp
+Con c;
+c.hello(); // Hello Con
+```
+
+---
+
+## 7️⃣ Gọi phương thức class cha
+
+```cpp
+Cha::hello();
+```
+
+📌 Dùng khi:
+- Muốn dùng lại logic của cha
+
+---
+
+## 8️⃣ Constructor trong kế thừa
+
+```cpp
+class Cha {
+public:
+    Cha(int x) {
+        cout << "Cha";
+    }
+};
+
+class Con : public Cha {
+public:
+    Con() : Cha(10) {
+        cout << "Con";
+    }
+};
+```
+
+📌 Constructor cha chạy **trước** con.
+
+---
+
+## 9️⃣ Ví dụ thực tế: Quản lý nhân viên
+
+```cpp
+class NhanVien {
+protected:
+    string ten;
+public:
+    NhanVien(string t) {
+        ten = t;
+    }
+};
+
+class NhanVienFullTime : public NhanVien {
+private:
+    int luong;
+public:
+    NhanVienFullTime(string t, int l) : NhanVien(t) {
+        luong = l;
+    }
+
+    void xuat() {
+        cout << ten << " - " << luong;
+    }
+};
+```
+
+---
+
+## 🔟 Kế thừa nhiều cấp
+
+```cpp
+class A {};
+class B : public A {};
+class C : public B {};
+```
+
+📌 C++ **không hỗ trợ đa kế thừa phức tạp trong thực tế** (tránh dùng).
+
+---
+
+## 1️⃣1️⃣ Bài tập thực hành ✍️
+
+### 📝 Bài 1
+Tạo class:
+- `DongVat`
+- `Cho` kế thừa `DongVat`
+
+---
+
+### 📝 Bài 2
+Tạo class:
+- `NhanVien`
+- `NhanVienPartTime`
+- `NhanVienFullTime`
+
+---
+
+### 📝 Bài 3 (tư duy)
+So sánh `private` và `protected` trong kế thừa.
+
+---
+
+## ❌ Lỗi thường gặp
+- Quên `public` khi kế thừa
+- Truy cập `private` từ class con
+- Không gọi constructor cha
+
+---
+
+## 🧠 Ghi nhớ nhanh
+- Kế thừa giúp tái sử dụng code
+- Dùng `protected` cho class cha
+- Constructor cha chạy trước
+
+---
+
+## ✅ Tổng kết
+✔️ Bạn đã:
+- Hiểu kế thừa
+- Tạo class con
+- Override phương thức
+- Áp dụng kế thừa thực tế
 
 
